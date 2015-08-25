@@ -1,0 +1,135 @@
+#!/usr/bin/env ruby
+
+$:.unshift File.dirname(__FILE__)
+
+require 'pathname'
+require_relative '../lib/favorite_directories'
+
+def main
+
+  command, params = parse_args(ARGV)
+  case command
+  when :add
+    add_dir(params)
+  when :list
+    list_dirs(params)
+  when :usage
+    usage()
+  when :select # default
+    select_dirs(params)
+  when :delete
+    delete_dir(params)
+  when ""
+  else
+  end
+end
+
+def parse_args(argv)
+
+  if argv.length == 0
+    return [:select, nil]
+  end
+
+  command = argv.shift
+
+  case command
+  when "--add"
+    return [:add, argv]
+  when "--list"
+    return [:list, nil]
+  when "--delete"
+    return [:delete, argv]
+  else
+  end
+
+end
+
+def add_dir(params)
+  dir = ""
+  if params.length == 0 || params[0] == "." || params[0] == ""
+    dir = Dir::pwd
+  else
+    dir = params[0]
+  end
+
+  name = get_abbr_name(dir)
+  STDERR.print "input abbr name. if you skip, it will be #{name}> "
+
+  line = STDIN.gets
+  name = line if line.strip.length > 0
+
+  if dir && !dir.empty? 
+    favorite_dirs = load_dirs
+    favorite_dirs << {
+      name: name,
+      path: dir
+    }
+    save_dirs(favorite_dirs)
+  end
+end
+
+def get_abbr_name(dir)
+  File.basename(dir)
+end
+
+def delete_dir(params)
+
+  return if params.length == 0
+
+  name = params[0]
+
+  if name.length > 0
+    favorite_dirs = load_dirs
+    favorite_dirs.delete_if do |item|
+      item[:name] == name
+    end
+    save_dirs(favorite_dirs)
+  end
+end
+
+def select_dirs(params)
+
+  favorite_dirs = load_dirs
+
+  print_favorites(favorite_dirs)
+
+  index_of_favorites = input_index_of_favorites(favorite_dirs)
+
+  return 1 if index_of_favorites == -1
+
+  puts File.expand_path(favorite_dirs[index_of_favorites][:path])
+
+  return 0
+end
+
+def print_favorites(favorites)
+  favorites.each_with_index do |item, index|
+    STDERR.puts "#{index}: #{item[:name]}: #{item[:path]}"
+  end
+end
+
+def input_index_of_favorites(favorites)
+
+  message = "select a path >"
+  STDERR.print message
+
+  str = ""
+  while str = STDIN.gets
+    str.strip!
+    begin
+      if str.downcase == 'q'
+        return -1
+      end
+
+      index = str.to_i
+      if index >= 0 && index < favorites.size
+        return index
+      else
+        STDERR.print message
+      end
+    rescue => error
+    end
+  end
+end
+
+main
