@@ -1,0 +1,97 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+require_relative 'lib/favorite_directories'
+
+FAVORITES=[
+{name: 'Xcode Plugins',  path: '~/Library/Application Support/Developer/Shared/Xcode/Plug-ins'},
+{name: 'src/scripts',  path: '~/src/scripts'},
+{name: 'src/plusadd',  path: '~/src/plusadd'}
+]
+
+def main
+
+  command, params = parse_args(ARGV)
+  case command
+  when "--add"
+    add_dir(params)
+  when "--usage"
+    usage()
+  when "--select" # default
+    select_dirs()
+  when ""
+  else
+  end
+end
+
+def add_dir(params)
+  dir = ""
+  if params.nil? or params[0] == "."
+    dir = Dir::pwd
+  else
+    dir = params[0]
+  end
+
+  name = get_abbr_name(dir)
+  STDERR.print "input abbr name. if you skip, it will be #{name}> "
+
+  line = STDIN.gets
+  if line.strip.length > 0
+    name = line
+  end
+
+  if dir && !dir.empty? 
+    favorite_dirs = load_favorite_dirs
+    favorite_dirs << {
+      name: name,
+      path: dir
+    }
+
+    save_favorite_dirs(dirs)
+  end
+end
+
+def select_dirs()
+
+  print_favorites(FAVORITES)
+
+  index_of_favorites = input_index_of_favorites(FAVORITES)
+
+  return 1 if index_of_favorites == -1
+
+  puts File.expand_path(FAVORITES[index_of_favorites][:path])
+
+  return 0
+end
+
+def print_favorites(favorites)
+
+  favorites.each_with_index do |item, index|
+    STDERR.puts "#{index}: #{item[:name]}: #{item[:path]}"
+  end
+end
+
+def input_index_of_favorites(favorites)
+
+  message = "select a path >"
+  STDERR.print message
+
+  str = ""
+  while str = STDIN.gets
+    begin
+      if str.downcase == 'q'
+        return -1
+      end
+
+      index = str.to_i
+      if index >= 0 && index < favorites.size
+        return index
+      else
+        STDERR.print message
+      end
+    rescue => error
+    end
+  end
+end
+
+main
