@@ -1,7 +1,9 @@
 #!/usr/bin/env ruby
 
+$:.unshift File.dirname(__FILE__)
+
 require 'pathname'
-require_relative 'lib/favorite_directories'
+require_relative '../lib/favorite_directories'
 
 FAVORITES=[
 {name: 'Xcode Plugins',  path: '~/Library/Application Support/Developer/Shared/Xcode/Plug-ins'},
@@ -13,15 +15,33 @@ def main
 
   command, params = parse_args(ARGV)
   case command
-  when "--add"
+  when :add
     add_dir(params)
-  when "--usage"
+  when :list
+    list_dirs(params)
+  when :usage
     usage()
-  when "--select" # default
-    select_dirs()
+  when :select # default
+    select_dirs(params)
   when ""
   else
   end
+end
+
+def parse_args(argv)
+
+  if argv.length == 0
+    return [:select, nil]
+  end
+
+  case argv[0]
+  when "--add"
+    return [:add, argv.shift]
+  when "--list"
+    return [:list, nil]
+  else
+  end
+
 end
 
 def add_dir(params)
@@ -51,7 +71,11 @@ def add_dir(params)
   end
 end
 
-def select_dirs()
+def get_abbr_name(dir)
+  File.basename(dir)
+end
+
+def select_dirs(params)
 
   print_favorites(FAVORITES)
 
