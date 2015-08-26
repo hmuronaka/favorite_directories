@@ -96,7 +96,7 @@ def select_dirs(params)
 
   index_of_favorites = input_index_of_favorites(favorite_dirs)
 
-  return 1 if index_of_favorites == -1
+  exit 1 if index_of_favorites == -1
 
   puts File.expand_path(favorite_dirs[index_of_favorites][:path])
 
