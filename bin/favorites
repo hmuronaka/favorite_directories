@@ -11,8 +11,8 @@ def main
   case command
   when :add
     add_dir(params)
-  when :list
-    list_dirs(params)
+  when :list_names
+    list_names(params)
   when :usage
     usage()
   when :select # default
@@ -35,8 +35,8 @@ def parse_args(argv)
   case command
   when "--add"
     return [:add, argv]
-  when "--list"
-    return [:list, nil]
+  when "--list-names"
+    return [:list_names, nil]
   when "--delete"
     return [:delete, argv]
   else
@@ -130,6 +130,17 @@ def input_index_of_favorites(favorites)
     rescue => error
     end
   end
+end
+
+def list_names(params)
+
+  favorite_dirs = load_dirs
+
+  names = favorite_dirs.map do |item|
+    item[:name]
+  end
+
+  puts names.join("\n")
 end
 
 main
