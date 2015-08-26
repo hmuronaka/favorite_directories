@@ -11,16 +11,16 @@ def main
   case command
   when :add
     add_dir(params)
-  when :list
-    list_dirs(params)
+  when :list_names
+    list_names(params)
   when :usage
     usage()
   when :select # default
     select_dirs(params)
   when :delete
     delete_dir(params)
-  when ""
-  else
+  when :move_dir
+    move_dir(params)
   end
 end
 
@@ -35,11 +35,12 @@ def parse_args(argv)
   case command
   when "--add"
     return [:add, argv]
-  when "--list"
-    return [:list, nil]
+  when "--list-names"
+    return [:list_names, nil]
   when "--delete"
     return [:delete, argv]
   else
+    return [:move_dir, [command]]
   end
 
 end
@@ -95,12 +96,14 @@ def select_dirs(params)
 
   index_of_favorites = input_index_of_favorites(favorite_dirs)
 
-  return 1 if index_of_favorites == -1
+  exit 1 if index_of_favorites == -1
 
   puts File.expand_path(favorite_dirs[index_of_favorites][:path])
 
   return 0
 end
+
+
 
 def print_favorites(favorites)
   favorites.each_with_index do |item, index|
@@ -129,6 +132,34 @@ def input_index_of_favorites(favorites)
       end
     rescue => error
     end
+  end
+end
+
+def list_names(params)
+
+  favorite_dirs = load_dirs
+
+  names = favorite_dirs.map do |item|
+    item[:name]
+  end
+
+  puts names.join("\n")
+end
+
+def move_dir(params)
+
+  target_name = params[0]
+
+  favorite_dirs = load_dirs
+
+  item = favorite_dirs.find do |item|
+    item[:name] == target_name
+  end
+
+  if item
+    puts item[:path]
+  else
+    puts ""
   end
 end
 
