@@ -19,8 +19,8 @@ def main
     select_dirs(params)
   when :delete
     delete_dir(params)
-  when ""
-  else
+  when :move_dir
+    move_dir(params)
   end
 end
 
@@ -40,6 +40,7 @@ def parse_args(argv)
   when "--delete"
     return [:delete, argv]
   else
+    return [:move_dir, [command]]
   end
 
 end
@@ -102,6 +103,8 @@ def select_dirs(params)
   return 0
 end
 
+
+
 def print_favorites(favorites)
   favorites.each_with_index do |item, index|
     STDERR.puts "#{index}: #{item[:name]}: #{item[:path]}"
@@ -141,6 +144,23 @@ def list_names(params)
   end
 
   puts names.join("\n")
+end
+
+def move_dir(params)
+
+  target_name = params[0]
+
+  favorite_dirs = load_dirs
+
+  item = favorite_dirs.find do |item|
+    item[:name] == target_name
+  end
+
+  if item
+    puts item[:path]
+  else
+    puts ""
+  end
 end
 
 main
