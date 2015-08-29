@@ -2,7 +2,7 @@
 
 require 'yaml'
 
-DIRS_PATH=File.expand_path("~/.favorite_directories", __FILE__)
+DIRS_PATH=File.expand_path("~/.favorite_directories/.favorites", __FILE__)
 
 def load_dirs
   load_dirs_with_path(DIRS_PATH)

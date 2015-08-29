@@ -2,11 +2,11 @@ FAVORITES_PATH=~/.favorite_directories/bin/favorites
 if [ -f $FAVORITES_PATH ]; then
   f() {
     if [ $# -eq 0 ]; then
-      SELECTED_PATH=`~/$FAVORITES_PATH`
+      SELECTED_PATH=`$FAVORITES_PATH`
       if [ $? -eq 0 ]; then
         pushd "${SELECTED_PATH}"
       fi
-    elif [ "$0" =~ "^--"  ]; then
+    elif [[ "$0" =~ "^--" ]]; then
       $FAVORITES_PATH $@
     else # move dir
       SELECTED_PATH=`$FAVORITES_PATH $@`

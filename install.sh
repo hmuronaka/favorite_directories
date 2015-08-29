@@ -29,7 +29,7 @@ for f in favorites; do
   cp ${CURRENT_DIR}/bin/${f} ${INSTALL_DIR}/bin/
 done
 
-for f in ifavorite_directories.rb; do
+for f in favorite_directories.rb; do
   cp ${CURRENT_DIR}/lib/${f} ${INSTALL_DIR}/lib/
 done
 
