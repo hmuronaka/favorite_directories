@@ -57,7 +57,7 @@ def add_dir(params)
   STDERR.print "input abbr name. if you skip, it will be #{name}> "
 
   line = STDIN.gets
-  name = line if line.strip.length > 0
+  name = line.strip if line.strip.length > 0
 
   if dir && !dir.empty? 
     favorite_dirs = load_dirs
