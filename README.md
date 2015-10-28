@@ -1,9 +1,6 @@
 f
 ========================
 
-
-
-
 ```bash
 ~:     $ cd ~/src
 ~/src: $ f --add # add ~/src to favorite_directories.
